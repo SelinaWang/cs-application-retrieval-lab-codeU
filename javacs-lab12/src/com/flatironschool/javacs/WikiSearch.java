@@ -60,8 +60,12 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch or(WikiSearch that) {
-        // FILL THIS IN!
-		return null;
+        Map<String, Integer> union = new HashMap<String, Integer>(map);
+        for (String key: that.map.keySet()) {
+        	Integer relevance = this.getRelevance(key) + that.getRelevance(key);
+        	union.put(key, relevance);
+        }
+		return new WikiSearch(union);
 	}
 	
 	/**
@@ -71,19 +75,28 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch and(WikiSearch that) {
-        // FILL THIS IN!
-		return null;
+        Map<String, Integer> intersection = new HashMap<String, Integer>();
+        for (String key: map.keySet()) {
+        	if (that.map.containsKey(key)) {
+        		Integer relevance = this.getRelevance(key) + that.getRelevance(key);
+        		intersection.put(key, relevance);
+        	}
+        }
+		return new WikiSearch(intersection);
 	}
 	
 	/**
-	 * Computes the intersection of two search results.
+	 * Computes the difference of two search results.
 	 * 
 	 * @param that
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch minus(WikiSearch that) {
-        // FILL THIS IN!
-		return null;
+        Map<String, Integer> difference = new HashMap<String, Integer>(map);
+        for (String key: that.map.keySet()) {
+        	difference.remove(key);
+        }
+		return new WikiSearch(difference);
 	}
 	
 	/**
@@ -104,8 +117,15 @@ public class WikiSearch {
 	 * @return List of entries with URL and relevance.
 	 */
 	public List<Entry<String, Integer>> sort() {
-        // FILL THIS IN!
-		return null;
+        List<Entry<String, Integer>> entries = new LinkedList<Entry<String, Integer>>(map.entrySet());
+        Comparator<Entry<String, Integer>> comparator = new Comparator<Entry<String, Integer>>() {
+        	@Override
+        	public int compare(Entry<String, Integer> entry1, Entry<String, Integer> entry2) {
+        		return entry1.getValue().compareTo(entry2.getValue());
+        	}
+        };
+        Collections.sort(entries,comparator);
+		return entries;
 	}
 
 	/**
